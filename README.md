@@ -375,3 +375,6 @@ custom_icon_path: /local/icons/weather/
 tap_action:
   action: more-info
 ```
+
+> [!TIP]
+> You can find more examples here: [Atmospheric Weather Card (Card Examples)](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)
