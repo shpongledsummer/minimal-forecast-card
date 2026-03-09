@@ -15,8 +15,9 @@ The focus here is just on showing a clean forecast. It's deliberately light on f
 
 [Installation](#installation)<br>
 [Quick Start](#quick-start)<br>
-[Configuration](#configuration)<br>
-[Styles](#styles)<br>
+[Configuration / Styling](#configuration--styling)<br>
+[Style Presets](#style-presets)<br>
+[CSS Variables](#css-variables)<br>
 [Embedded Mode](#embedded-mode)<br>
 [Custom Icons](#custom-icons)
 
@@ -83,7 +84,7 @@ This gives you a horizontal 7-day forecast with 4 items visible at a time, a spa
 
 <br>
 
-## Configuration
+## Configuration / Styling
 
 #### Required
 
@@ -201,7 +202,7 @@ tap_action:
 
 <br>
 
-## Styles
+## Style Presets
 
 The `style` option controls how individual forecast items look. There are three options.
 
@@ -259,7 +260,7 @@ style: glass
 
 <br>
 
-### CSS Variables
+## CSS Variables
 
 On top of the YAML options in the [Configuration](#configuration) section, you can fine-tune the card using CSS custom properties. Set these in your Home Assistant theme for global use, or use `card_mod` to target a specific card.
 
