@@ -4,9 +4,11 @@ A forecast-only card for Home Assistant, built as a companion to the [Atmospheri
 
 The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. This card has horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
 
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/d62762a9-35cf-4711-9d9c-5fc1568b4d08" /><br>
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/b236c85c-0b1a-4b14-97a8-9c2f640b7978" /><br>
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/1c85a2b9-20a7-41a9-bfc7-1a17982832c4" /><br>
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/e66a386d-d165-4251-9b9d-4eaf8ed5cac8" /><br>
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
+
+*The examples are provided [here.](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)*
+
 <br>
 
 ## Contents
@@ -50,14 +52,34 @@ The focus here is just on showing a clean forecast. It's deliberately light on f
 
 ## Quick Start
 
-A basic card with all defaults:
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/d62762a9-35cf-4711-9d9c-5fc1568b4d08" /><br>
+
+A basic card:
 
 ```yaml
 type: custom:minimal-forecast-card
 entity: weather.your_weather_entity
+forecast_type: daily
+days_to_show: 7
+visible: 4
+style: clean
+dividers: true
+divider_inset: 0px
+divider_color: rgba(0, 0, 0, 0.05)
+item_spacing: 8px
+inner_spacing: 12px
+item_padding: 20px
+direction: horizontal
+embedded: false
+sparkline: true
+sparkline_color: rgba(213, 184, 82, 0.4)
+font_size: 16px
+icon_size: 46px
+custom_icon_path: /local/weather-icons/
+
 ```
 
-This gives you a horizontal 7-day forecast with 5 items visible at a time, a sparkline temperature curve, and the `clean` style. Everything else is optional.
+This gives you a horizontal 7-day forecast with 4 items visible at a time, a sparkline temperature curve, and the `clean` style.
 
 <br>
 
@@ -326,48 +348,3 @@ These are the weather conditions the card handles. Provide an SVG file for each 
 If a condition doesn't have a matching file, the image element will render but show nothing. There is no automatic fallback to MDI when using custom icons.
 
 </details>
-
-<br>
-
-## Full Example
-
-A card using most of the available options:
-
-```yaml
-type: custom:minimal-forecast-card
-entity: weather.your_weather_entity
-forecast_type: daily
-items_to_show: 7
-visible: 5
-direction: horizontal
-style: soft
-dividers: true
-divider_color: "rgba(255,255,255,0.15)"
-divider_width: 2px
-divider_inset: 5%
-item_spacing: 4px
-inner_spacing: 8px
-item_height: 120px
-card_padding: 16px
-item_padding: 0.75em 0.5em
-font_size: medium
-icon_size: 30
-hide_min_temp: false
-sparkline: true
-sparkline_color: var(--primary-color)
-sparkline_width: 2
-card_shadow: 0 2px 6px rgba(0,0,0,0.08)
-item_shadow: none
-card_background: "rgba(0,0,0,0.4)"
-item_background: "rgba(255,255,255,0.08)"
-embedded: false
-custom_icon_path: /local/icons/weather/
-tap_action:
-  action: more-info
-```
-
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/7e0c7cc5-c0b7-405a-8e35-1fff9faa8281" /><br>
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
-
-> [!TIP]
-> You can find more examples here: [Atmospheric Weather Card (Card Examples)](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)
