@@ -1,15 +1,12 @@
 ## Minimal Forecast Card
 
-<!-- SCREENSHOT PLACEHOLDER: main card preview, ~400px wide -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
+A forecast-only card for Home Assistant, built as a companion to the [Atmospheric Weather Card](https://github.com/shpongledsummer/atmospheric-weather-card). 
 
-A forecast-only card for Home Assistant, built as the companion to the [Atmospheric Weather Card](https://github.com/shpongledsummer/atmospheric-weather-card). The focus is on a clean, high-quality forecast and nothing else.
-
-This card doesn't have many features on purpose. The goal is to do one thing (forecast) and do it well. It supports horizontal and vertical layouts with CSS-only scrolling, a sparkline temperature curve, three visual styles, and plenty of options to adapt it to your dashboard.
+The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. You still get the essentials: horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/3c47ffde-c39a-4cfe-b6d0-b40bffe3fd9a" /><br>
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/7e0c7cc5-c0b7-405a-8e35-1fff9faa8281" /><br>
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/1ee0296d-7f72-4b39-9d2b-0240d3ebeb01" />
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/1c85a2b9-20a7-41a9-bfc7-1a17982832c4" /><br>
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/b236c85c-0b1a-4b14-97a8-9c2f640b7978" /><br>
 
 <br>
 
@@ -58,13 +55,10 @@ A basic card with all defaults:
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 ```
 
 This gives you a horizontal 7-day forecast with 5 items visible at a time, a sparkline temperature curve, and the `clean` style. Everything else is optional.
-
-<!-- SCREENSHOT PLACEHOLDER: basic default card -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
 
 <br>
 
@@ -199,7 +193,7 @@ A flat, minimal look with no background on the items. Divider lines appear betwe
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 style: clean
 dividers: true
 ```
@@ -215,7 +209,7 @@ Each item gets a subtle, tinted background tile with rounded corners. Dividers a
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 style: soft
 ```
 
@@ -236,7 +230,7 @@ Works best on dashboards with a visible background image or gradient.
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 style: glass
 ```
 
@@ -279,7 +273,7 @@ This shows how to apply custom styles to a specific card using `card_mod`.
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 card_mod:
   style: |
     :host {
@@ -300,12 +294,9 @@ card_mod:
 
 Setting `embedded: true` removes all card chrome: padding, background, box shadow, and border are stripped. This is meant for nesting the forecast inside another card (like a vertical stack or the Atmospheric Weather Card) so you don't get that card-inside-card look.
 
-<!-- SCREENSHOT PLACEHOLDER: embedded vs non-embedded comparison -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
-
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 embedded: true
 style: glass
 ```
@@ -345,7 +336,7 @@ A card using most of the available options:
 
 ```yaml
 type: custom:minimal-forecast-card
-entity: weather.home
+entity: weather.your_weather_entity
 forecast_type: daily
 items_to_show: 7
 visible: 5
@@ -375,6 +366,9 @@ custom_icon_path: /local/icons/weather/
 tap_action:
   action: more-info
 ```
+
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/7e0c7cc5-c0b7-405a-8e35-1fff9faa8281" /><br>
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
 
 > [!TIP]
 > You can find more examples here: [Atmospheric Weather Card (Card Examples)](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)
