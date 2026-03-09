@@ -2,7 +2,7 @@
 
 A forecast-only card for Home Assistant, built as a companion to the [Atmospheric Weather Card](https://github.com/shpongledsummer/atmospheric-weather-card). 
 
-The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. This card has horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
+The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. This card has horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of styling options to tweak it for your dashboard.
 
 <img width="400" alt="Image" src="https://github.com/user-attachments/assets/e66a386d-d165-4251-9b9d-4eaf8ed5cac8" /><br>
 <img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
