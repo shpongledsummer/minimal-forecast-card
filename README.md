@@ -5,9 +5,8 @@ A forecast-only card for Home Assistant, built as a companion to the [Atmospheri
 The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. You still get the essentials: horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/3c47ffde-c39a-4cfe-b6d0-b40bffe3fd9a" /><br>
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/1c85a2b9-20a7-41a9-bfc7-1a17982832c4" /><br>
 <img width="400" alt="Image" src="https://github.com/user-attachments/assets/b236c85c-0b1a-4b14-97a8-9c2f640b7978" /><br>
-
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/1c85a2b9-20a7-41a9-bfc7-1a17982832c4" /><br>
 <br>
 
 ## Contents
@@ -68,7 +67,7 @@ This gives you a horizontal 7-day forecast with 5 items visible at a time, a spa
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| **`entity`** | `string` | — | **Required.** Your weather integration entity (e.g., `weather.home`). |
+| **`entity`** | `string` | — | **Required.** Your weather integration entity (e.g., `weather.your_weather_entity`). |
 
 <details>
 <summary><strong>Forecast Settings</strong></summary>
