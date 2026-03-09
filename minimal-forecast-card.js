@@ -60,13 +60,14 @@ const CSS = `
     --mfc-sp: 10px;
     --mfc-icon: 2em;
     --mfc-vis: 5;
-    --mfc-pad: 16px;
 
     --mfc-label-color: var(--secondary-text-color);
     --mfc-hi-color: var(--primary-text-color);
     --mfc-lo-color: var(--secondary-text-color);
     --mfc-icon-color: var(--secondary-text-color);
-    --mfc-divider-color: var(--divider-color, rgba(128,128,128,0.3));
+    --mfc-divider-color: var(--divider-color, rgba(255,255,255,0.2));
+	--mfc-divider-width: 3px;
+    --mfc-divider-inset: 0;
     --mfc-spark-color: var(--primary-color, #4a90d9);
     --mfc-spark-width: 2;
 
@@ -81,8 +82,8 @@ const CSS = `
   /* ─── card shell ─── */
   ha-card {
     -webkit-tap-highlight-color: transparent;
-    padding: var(--mfc-pad);
-    background: var(--ha-card-background, var(--card-background-color, #fff));
+    padding: var(--mfc-card-pad, 16px);
+    background: var(--mfc-card-bg, var(--ha-card-background, var(--card-background-color, #fff)));
     color: var(--primary-text-color);
     font-family: var(--ha-card-header-font-family, inherit);
     border-radius: var(--ha-card-border-radius, 12px);
@@ -105,7 +106,7 @@ const CSS = `
   /* ─── root card glass effect (ignored if embedded) ─── */
   ha-card[data-style="glass"]:not([data-embedded]) {
     /* Mix the theme's solid background with 50% transparency */
-    background: color-mix(in srgb, var(--ha-card-background, var(--card-background-color, #fff)) 50%, transparent);
+    background: var(--mfc-card-bg, color-mix(in srgb, var(--ha-card-background, var(--card-background-color, #fff)) 12%, transparent));
     backdrop-filter: blur(12px) saturate(130%);
     -webkit-backdrop-filter: blur(12px) saturate(130%);
   }
@@ -212,7 +213,7 @@ const CSS = `
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.75em 0.5em;
+    padding: var(--mfc-item-pad, 0.75em 0.5em);
     text-align: center;
     min-width: 0;
 	gap: var(--mfc-sp);
@@ -223,11 +224,11 @@ const CSS = `
   .fc-row[data-dividers] .fc-col + .fc-col::before {
     content: "";
     position: absolute;
-    top: 5%;
-    bottom: 5%;
+    top: var(--mfc-divider-inset);
+    bottom: var(--mfc-divider-inset);
     /* CPU-rendered exact center: half the gap + half the 3px width */
-    inset-inline-start: calc((var(--_g) / -2) - 1.5px);
-    width: 3px;
+    inset-inline-start: calc((var(--_g) / -2) - (var(--mfc-divider-width) / 2));
+    width: var(--mfc-divider-width);
     background: var(--mfc-divider-color);
     pointer-events: none;
   }
@@ -237,26 +238,29 @@ const CSS = `
     /* CPU-rendered exact center: half the gap + half the 3px height */
     top: calc((var(--_g) / -2) - 1.5px);
     bottom: auto;
-    inset-inline-start: 5%;
-    inset-inline-end: 5%;
+    inset-inline-start: var(--mfc-divider-inset);
+    inset-inline-end: var(--mfc-divider-inset);
     width: auto;
-    height: 3px;
+    height: var(--mfc-divider-width);
   }
-  /* soft/glass have tile chrome — suppress dividers */
-  .fc-row[data-style="soft"] .fc-col + .fc-col::before,
-  .fc-row[data-style="glass"] .fc-col + .fc-col::before {
+  /* soft has tile chrome — suppress dividers */
+  .fc-row[data-style="soft"] .fc-col + .fc-col::before {
+    display: none;
+  }
+  /* glass: suppress dividers only when embedded (items have tile chrome) */
+  ha-card[data-embedded] .fc-row[data-style="glass"] .fc-col + .fc-col::before {
     display: none;
   }
 
   /* ─── style: soft ─── */
   .fc-row[data-style="soft"] .fc-col {
-    background: color-mix(in srgb, var(--secondary-text-color) 6%, transparent);
+    background: var(--mfc-item-bg, color-mix(in srgb, var(--secondary-text-color) 6%, transparent));
     border-radius: calc(var(--ha-card-border-radius, 12px) * 0.6);
   }
 
-  /* ─── style: glass ─── */
-  .fc-row[data-style="glass"] .fc-col {
-    background: color-mix(in srgb, var(--secondary-text-color) 6%, transparent);
+  /* ─── style: glass — item chrome only when embedded (card has its own blur) ─── */
+  ha-card[data-embedded] .fc-row[data-style="glass"] .fc-col {
+    background: var(--mfc-item-bg, color-mix(in srgb, var(--secondary-text-color) 6%, transparent));
     border-radius: calc(var(--ha-card-border-radius, 12px) * 0.6);
     backdrop-filter: blur(12px) saturate(130%);
     -webkit-backdrop-filter: blur(12px) saturate(130%);
@@ -267,25 +271,24 @@ const CSS = `
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0.875em 1em;
+    padding: var(--mfc-item-pad, 0.875em 1em);
 	height: var(--_row-h);
     width: 100%;
   }
 
   /* ─── label (day name or hour) ─── */
   .fc-label {
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: var(--mfc-label-font-weight, 600);
     line-height: 1;
-    color: var(--mfc-label-color);
+    color: var(--mfc-label-color, var(--primary-text-color, #333333));
     text-transform: uppercase;
-    letter-spacing: 0.04em;
     white-space: nowrap;
-    opacity: 0.55;
+    opacity: 0.75;
   }
   .fc-col[data-today] .fc-label {
-    color: var(--mfc-hi-color);
-    opacity: 0.85;
+    color: var(--mfc-label-color, var(--primary-text-color, #333333));
+    opacity: 1;
   }
   .fc-row[data-dir="v"] .fc-label {
     width: fit-content;
@@ -297,7 +300,7 @@ const CSS = `
   /* ─── icon ─── */
   .fc-icon {
     --mdc-icon-size: var(--mfc-icon);
-    color: var(--mfc-icon-color);
+    color: var(--mfc-icon-color, var(--state-icon-color, #333333));
     flex-shrink: 0;
   }
   .fc-custom-icon {
@@ -318,22 +321,21 @@ const CSS = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.375em;
+	gap: var(--mfc-sp);
   }
   .fc-hi {
     font-size: 1.1em;
     font-weight: var(--mfc-hi-font-weight, 600);
     line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--mfc-hi-color);
+    color: var(--mfc-hi-color, var(--primary-text-color, #333333));
     font-variant-numeric: tabular-nums;
   }
   .fc-lo {
     font-size: 1em;
     font-weight: var(--mfc-lo-font-weight, 400);
     line-height: 1;
-    color: var(--mfc-lo-color);
-    opacity: 0.5;
+    color: var(--mfc-lo-color, var(--primary-text-color, #333333));
+    opacity: 0.75;
     font-variant-numeric: tabular-nums;
   }
 
@@ -357,7 +359,7 @@ const CSS = `
   .not-found {
     padding: 16px;
     text-align: center;
-    color: var(--secondary-text-color);
+    color: var(--mfc-label-color, var(--secondary-text-color, #333333));
     font-size: 0.85em;
     opacity: 0.55;
   }
@@ -733,8 +735,11 @@ class MinimalForecastCard extends HTMLElement {
       itemSp:     raw.item_spacing != null ? cssLen(raw.item_spacing, "0px") : null,
       innerSp:    cssLen(raw.inner_spacing, "10px"),
       itemHeight: raw.item_height != null ? cssLen(raw.item_height, null) : null,
-      dividers:   raw.dividers !== false,
-      style:      STYLE_SET.has(raw.style) ? raw.style : "clean",
+      dividers:      raw.dividers !== false,
+      dividerColor:  raw.divider_color ? String(raw.divider_color).trim() : null,
+      dividerWidth:  raw.divider_width != null ? cssLen(raw.divider_width, "3px") : null,
+      dividerInset:  raw.divider_inset != null ? cssLen(raw.divider_inset, "0") : null,
+      style:         STYLE_SET.has(raw.style) ? raw.style : "clean",
       dir:        raw.direction === "vertical" ? "v" : "h",
       cardShadow: raw.card_shadow != null ? String(raw.card_shadow).trim() : null,
       itemShadow: raw.item_shadow != null ? String(raw.item_shadow).trim() : null,
@@ -742,9 +747,13 @@ class MinimalForecastCard extends HTMLElement {
       spark:      raw.sparkline !== false,
       sparkColor: raw.sparkline_color ? String(raw.sparkline_color).trim() : null,
       sparkWidth: raw.sparkline_width != null ? String(raw.sparkline_width).trim() : null,
+      cardPad:    raw.card_padding != null ? String(raw.card_padding).trim() : null,
+      cardBg:     raw.card_background != null ? String(raw.card_background).trim() : null,
+      itemPad:    raw.item_padding != null ? String(raw.item_padding).trim() : null,
+      itemBg:     raw.item_background != null ? String(raw.item_background).trim() : null,
       embedded:   raw.embedded === true,
       fontSize:   parseFontSize(raw.font_size),
-      iconPx:     (typeof raw.icon_size === "number" && raw.icon_size > 0) ? raw.icon_size : null,
+      iconSize:   cssLen(raw.icon_size, "3em"),
       iconPath:   raw.custom_icon_path || null,
       tap:        raw.tap_action?.action ?? "more-info",
       tap_action: raw.tap_action || { action: "more-info" },
@@ -765,7 +774,7 @@ class MinimalForecastCard extends HTMLElement {
       this._fcKey = fp(this._fc);
       const VIS_KEYS = [
         "items", "vis", "itemSp", "innerSp", "dividers", "style",
-        "dir", "spark", "hideMin", "embedded", "fontSize", "iconPx", "iconPath",
+        "dir", "spark", "hideMin", "embedded", "fontSize", "iconSize", "iconPath",
       ];
       for (const k of VIS_KEYS) {
         if (next[k] !== prev[k]) {
@@ -920,7 +929,16 @@ class MinimalForecastCard extends HTMLElement {
     if (c.itemHeight) rs.setProperty("--mfc-item-h", c.itemHeight);
     else rs.removeProperty("--mfc-item-h");
     rs.setProperty("--mfc-vis", c.vis);
-    rs.setProperty("--mfc-icon", c.iconPx ? c.iconPx + "px" : "2em");
+    rs.setProperty("--mfc-icon", c.iconSize);
+
+    if (c.dividerColor) rs.setProperty("--mfc-divider-color", c.dividerColor);
+    else rs.removeProperty("--mfc-divider-color");
+
+    if (c.dividerWidth) rs.setProperty("--mfc-divider-width", c.dividerWidth);
+    else rs.removeProperty("--mfc-divider-width");
+
+    if (c.dividerInset) rs.setProperty("--mfc-divider-inset", c.dividerInset);
+    else rs.removeProperty("--mfc-divider-inset");
 
     if (c.itemSp != null) rs.setProperty("--_g", c.itemSp);
     else rs.removeProperty("--_g");
@@ -931,8 +949,19 @@ class MinimalForecastCard extends HTMLElement {
     if (c.sparkWidth) rs.setProperty("--mfc-spark-width", c.sparkWidth);
     else rs.removeProperty("--mfc-spark-width");
 
-    if (c.cardShadow) rs.setProperty("--mfc-card-shadow", c.cardShadow);
-    else rs.removeProperty("--mfc-card-shadow");
+    if (c.cardPad) this._card.style.setProperty("--mfc-card-pad", c.cardPad);
+    else this._card.style.removeProperty("--mfc-card-pad");
+
+    if (c.cardBg) this._card.style.setProperty("--mfc-card-bg", c.cardBg);
+    else this._card.style.removeProperty("--mfc-card-bg");
+
+    if (c.cardShadow) this._card.style.setProperty("--mfc-card-shadow", c.cardShadow);
+
+    if (c.itemPad) rs.setProperty("--mfc-item-pad", c.itemPad);
+    else rs.removeProperty("--mfc-item-pad");
+
+    if (c.itemBg) rs.setProperty("--mfc-item-bg", c.itemBg);
+    else rs.removeProperty("--mfc-item-bg");
 
     if (c.itemShadow) rs.setProperty("--mfc-item-shadow", c.itemShadow);
     else rs.removeProperty("--mfc-item-shadow");
