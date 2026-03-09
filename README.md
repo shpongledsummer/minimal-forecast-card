@@ -92,7 +92,6 @@ This gives you a horizontal 7-day forecast, 5 items visible at a time, a sparkli
 
 Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there are more items than `visible`, the card becomes scrollable — horizontally or vertically depending on the `direction` setting. Items snap into place on touch devices. If all items fit, they stretch equally to fill the available width (horizontal) or stack naturally (vertical).
 
-> [!NOTE]
 > In vertical mode, each item becomes a row — with the label on the left, the icon next to it, and temperatures aligned to the right. The sparkline is automatically hidden in vertical mode.
 
 </details>
@@ -107,9 +106,6 @@ Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there ar
 | `item_spacing` | `CSS length` | *per style* | Gap between forecast items. Any CSS value works: `0`, `4px`, `2%`, `0.25em`. The `clean` style defaults to `0`, while `soft` and `glass` default to `0.25em`. |
 | `inner_spacing` | `CSS length` | `10px` | Gap between the label, icon, and temperature inside each forecast item. |
 | `item_height` | `CSS length` | *auto* | Overrides the height of each forecast item. Useful for matching specific row heights in vertical mode or setting taller columns in horizontal mode. |
-
-> [!TIP]
-> The card uses CSS `em` units internally, so everything scales relative to `font_size`. If you change only `font_size`, the entire card (icons, spacing, text) adjusts proportionally without needing to touch anything else.
 
 </details>
 
@@ -170,7 +166,6 @@ tap_action:
   action: none
 ```
 
-> [!NOTE]
 > The card distinguishes between taps and scroll gestures. Scrolling through the forecast won't accidentally trigger the tap action. When the action is set to `none`, the pointer cursor is also hidden.
 
 </details>
@@ -181,18 +176,12 @@ tap_action:
 
 The `style` option controls how individual forecast items are rendered. There are three options.
 
-<!-- SCREENSHOT PLACEHOLDER: side-by-side comparison of all 3 styles -->
-<!-- <img width="600" alt="image" src="URL_HERE" /> -->
-
 <details>
 <summary><b>clean</b> (default)</summary>
 
 <br>
 
 A flat, minimal look with no background on the items. Divider lines appear between items when `dividers: true` (the default).
-
-<!-- SCREENSHOT PLACEHOLDER: clean style -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
 
 ```yaml
 type: custom:minimal-forecast-card
@@ -210,9 +199,6 @@ dividers: true
 
 Each item gets a subtle, tinted background tile with rounded corners. Dividers are automatically hidden since the tiles already provide visual separation. A small default gap (`0.25em`) is applied between items.
 
-<!-- SCREENSHOT PLACEHOLDER: soft style -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
-
 ```yaml
 type: custom:minimal-forecast-card
 entity: weather.home
@@ -228,16 +214,12 @@ style: soft
 
 Same tile layout as `soft`, but with a frosted-glass effect using `backdrop-filter`. The outer card also becomes translucent so you can see through to whatever is behind it. Works best on dashboards with a visible background image or gradient. Dividers are automatically hidden.
 
-<!-- SCREENSHOT PLACEHOLDER: glass style -->
-<!-- <img width="400" alt="image" src="URL_HERE" /> -->
-
 ```yaml
 type: custom:minimal-forecast-card
 entity: weather.home
 style: glass
 ```
 
-> [!NOTE]
 > The glass effect on the outer card is automatically disabled when `embedded: true`, since the parent card is expected to handle its own background.
 
 </details>
