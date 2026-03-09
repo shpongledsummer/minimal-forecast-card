@@ -2,7 +2,7 @@
 
 A forecast-only card for Home Assistant, built as a companion to the [Atmospheric Weather Card](https://github.com/shpongledsummer/atmospheric-weather-card). 
 
-The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. You still get the essentials: horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
+The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. This card has horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of options to tweak it for your dashboard.
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/3c47ffde-c39a-4cfe-b6d0-b40bffe3fd9a" /><br>
 <img width="400" alt="Image" src="https://github.com/user-attachments/assets/b236c85c-0b1a-4b14-97a8-9c2f640b7978" /><br>
@@ -84,7 +84,7 @@ This gives you a horizontal 7-day forecast with 5 items visible at a time, a spa
 
 Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there are more items than `visible`, the card becomes scrollable, either horizontally or vertically depending on the `direction` setting. Items snap into place on touch devices. If all items fit, they stretch equally to fill the available width (horizontal) or stack naturally (vertical).
 
-> In vertical mode, each item becomes a row with the label on the left, the icon next to it, and temperatures aligned to the right. The sparkline is automatically hidden in vertical mode.
+> In vertical mode, each item becomes a row with the icon and label on the left and temperatures aligned to the right. The sparkline is automatically hidden in vertical mode.
 
 </details>
 
@@ -291,7 +291,7 @@ card_mod:
 
 ## Embedded Mode
 
-Setting `embedded: true` removes all card chrome: padding, background, box shadow, and border are stripped. This is meant for nesting the forecast inside another card (like a vertical stack or the Atmospheric Weather Card) so you don't get that card-inside-card look.
+Setting `embedded: true` removes all card container styles (padding, background, box shadow, and border). This is meant for nesting the forecast inside another card (like a vertical stack or the Atmospheric Weather Card) so you don't get that card-inside-card look.
 
 ```yaml
 type: custom:minimal-forecast-card
@@ -300,7 +300,7 @@ embedded: true
 style: glass
 ```
 
-When using the `glass` style with `embedded: true`, the outer card's glass effect is disabled (since the parent card handles its own background). Instead, each individual forecast item gets its own frosted tile.
+When using the `glass` style with `embedded: true`, the card's glass effect is disabled (since the parent card handles its own background). Instead, each individual forecast item gets its own frosted tile.
 
 <br>
 
