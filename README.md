@@ -5,12 +5,11 @@
 
 A forecast-only card for Home Assistant, built as the companion to the [Atmospheric Weather Card](https://github.com/shpongledsummer/atmospheric-weather-card). The focus is on a clean, high-quality forecast and nothing else.
 
-This card doesn't have many features on purpose, the goal is to do one thing (forecast) and do it well. It supports horizontal and vertical layouts with CSS-only scrolling, a sparkline temperature curve, three visual styles, and plenty of options to adapt it to your dashboard.
+This card doesn't have many features on purpose. The goal is to do one thing (forecast) and do it well. It supports horizontal and vertical layouts with CSS-only scrolling, a sparkline temperature curve, three visual styles, and plenty of options to adapt it to your dashboard.
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/3c47ffde-c39a-4cfe-b6d0-b40bffe3fd9a" /><br>
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/7e0c7cc5-c0b7-405a-8e35-1fff9faa8281" /><br>
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/1ee0296d-7f72-4b39-9d2b-0240d3ebeb01" />
-
-
 
 <br>
 
@@ -28,7 +27,7 @@ This card doesn't have many features on purpose, the goal is to do one thing (fo
 ## Installation
 
 <details>
-<summary><b>Method 1 — HACS (Recommended)</b></summary>
+<summary><b>Method 1 - HACS (Recommended)</b></summary>
 
 1. Open **HACS** in Home Assistant.
 2. Navigate to **Frontend** → **Custom repositories** (via the top-right menu).
@@ -39,7 +38,7 @@ This card doesn't have many features on purpose, the goal is to do one thing (fo
 </details>
 
 <details>
-<summary><b>Method 2 — Manual</b></summary>
+<summary><b>Method 2 - Manual</b></summary>
 
 1. Download `minimal-forecast-card.js` from the latest release.
 2. Place the file in your `config/www/` folder.
@@ -62,7 +61,7 @@ type: custom:minimal-forecast-card
 entity: weather.home
 ```
 
-This gives you a horizontal 7-day forecast, 5 items visible at a time, a sparkline temperature curve, and the `clean` style. Everything else is optional.
+This gives you a horizontal 7-day forecast with 5 items visible at a time, a sparkline temperature curve, and the `clean` style. Everything else is optional.
 
 <!-- SCREENSHOT PLACEHOLDER: basic default card -->
 <!-- <img width="400" alt="image" src="URL_HERE" /> -->
@@ -82,17 +81,17 @@ This gives you a horizontal 7-day forecast, 5 items visible at a time, a sparkli
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `forecast_type` | `string` | `daily` | Which forecast to request from your weather entity. Accepts `daily` or `hourly`. |
-| `items_to_show` | `number` | `7` | Total number of forecast entries to display. Accepts values from `1` to `14`. |
-| `visible` | `number` | `5` | How many items are visible at once before scrolling begins. If `items_to_show` is less than or equal to this value, all items fit without scrolling. |
+| `forecast_type` | `string` | `daily` | Which forecast to request. `daily` or `hourly`. |
+| `items_to_show` | `number` | `7` | Total number of forecast entries to display (`1` to `14`). |
+| `visible` | `number` | `5` | How many items are visible at once before scrolling kicks in. If `items_to_show` is less than or equal to this value, all items fit without scrolling. |
 | `direction` | `string` | `horizontal` | Layout direction. `horizontal` lays items side by side, `vertical` stacks them top to bottom. |
-| `hide_min_temp` | `boolean` | `false` | Hides the low temperature. Useful for hourly forecasts (which typically don't include a low value) or for a cleaner look. |
+| `hide_min_temp` | `boolean` | `false` | Hides the low temperature. Useful for hourly forecasts (which usually don't include a low value) or if you just want a cleaner look. |
 
 **Scrolling behavior**
 
-Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there are more items than `visible`, the card becomes scrollable — horizontally or vertically depending on the `direction` setting. Items snap into place on touch devices. If all items fit, they stretch equally to fill the available width (horizontal) or stack naturally (vertical).
+Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there are more items than `visible`, the card becomes scrollable, either horizontally or vertically depending on the `direction` setting. Items snap into place on touch devices. If all items fit, they stretch equally to fill the available width (horizontal) or stack naturally (vertical).
 
-> In vertical mode, each item becomes a row — with the label on the left, the icon next to it, and temperatures aligned to the right. The sparkline is automatically hidden in vertical mode.
+> In vertical mode, each item becomes a row with the label on the left, the icon next to it, and temperatures aligned to the right. The sparkline is automatically hidden in vertical mode.
 
 </details>
 
@@ -101,23 +100,25 @@ Scrolling is handled entirely in CSS (no JavaScript scroll logic). When there ar
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `font_size` | `string` · `CSS length` | `medium` | Base font size for the entire card. All internal sizing (icons, spacing, text) scales from this value. Accepts named sizes: `small`, `medium`, `large`, `xlarge` — or any CSS length like `14px` or `1.2em`. |
-| `icon_size` | `number` · `CSS length` | *scales with font* | Icon size. Numbers are treated as pixels (e.g., `32` becomes `32px`). If not set, icons scale proportionally with the base font size. |
+| `font_size` | `string` / `CSS length` | `medium` | Base font size for the entire card. All internal sizing (icons, spacing, text) scales from this. Accepts named sizes: `small`, `medium`, `large`, `xlarge`, or any CSS length like `14px` or `1.2em`. |
+| `icon_size` | `number` / `CSS length` | *scales with font* | Icon size. Numbers are treated as pixels (e.g., `32` becomes `32px`). If not set, icons scale proportionally with the base font size. |
 | `item_spacing` | `CSS length` | *per style* | Gap between forecast items. Any CSS value works: `0`, `4px`, `2%`, `0.25em`. The `clean` style defaults to `0`, while `soft` and `glass` default to `0.25em`. |
 | `inner_spacing` | `CSS length` | `10px` | Gap between the label, icon, and temperature inside each forecast item. |
 | `item_height` | `CSS length` | *auto* | Overrides the height of each forecast item. Useful for matching specific row heights in vertical mode or setting taller columns in horizontal mode. |
+| `card_padding` | `CSS padding` | `16px` | Padding of the outer card. Accepts any CSS padding shorthand: `20px`, `10px 0px`, `8px 12px 8px 12px`. Ignored when `embedded: true` (padding is forced to 0). |
+| `item_padding` | `CSS padding` | *per direction* | Padding inside each forecast item. Defaults to `0.75em 0.5em` in horizontal mode and `0.875em 1em` in vertical mode. Accepts any CSS padding shorthand. |
 
 </details>
 
 <details>
 <summary><strong>Sparkline</strong></summary>
 
-The sparkline is a smooth curve drawn behind the forecast items, connecting the high temperatures across all entries. It gives a quick visual sense of the temperature trend over the coming days or hours.
+The sparkline is a smooth curve drawn behind the forecast items, connecting the high temperatures across all entries. It gives a quick visual sense of the temperature trend.
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `sparkline` | `boolean` | `true` | Show the temperature curve. Only renders in horizontal mode — automatically hidden in vertical. Requires at least 3 data points. |
-| `sparkline_color` | `CSS color` | `var(--primary-color)` | Color of the sparkline. Accepts any CSS color: hex, rgba, or a CSS variable. |
+| `sparkline` | `boolean` | `true` | Show the temperature curve. Only renders in horizontal mode and is automatically hidden in vertical. Requires at least 3 data points. |
+| `sparkline_color` | `CSS color` | `var(--primary-color)` | Color of the sparkline. Any CSS color works: hex, rgba, or a CSS variable. |
 | `sparkline_width` | `number` | `2` | Stroke width of the sparkline path in pixels. |
 
 ```yaml
@@ -133,12 +134,25 @@ sparkline_width: 3
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `style` | `string` | `clean` | Visual style for the forecast items. Accepts `clean`, `soft`, or `glass`. See [Styles](#styles) for details and examples. |
-| `dividers` | `boolean` | `true` | Show thin separator lines between items. Only applies to the `clean` style — `soft` and `glass` use tile backgrounds instead, so dividers are automatically hidden for those. |
+| `style` | `string` | `clean` | Visual style for the forecast items. `clean`, `soft`, or `glass`. See [Styles](#styles) for details. |
+| `dividers` | `boolean` | `true` | Show separator lines between items. Dividers are always hidden in `soft` style (the tiles provide enough separation). In `glass` style, dividers show when the card is standalone but are hidden when `embedded: true` (since the individual tiles take over). |
+| `divider_color` | `CSS color` | `var(--divider-color)` | Color of the divider lines. Falls back to `rgba(255,255,255,0.2)` if `--divider-color` is not set in your theme. |
+| `divider_width` | `number` / `CSS length` | `3px` | Thickness of the divider lines. Numbers are treated as pixels. |
+| `divider_inset` | `CSS length` | `0` | Inset from both ends of each divider. In horizontal mode this is the top/bottom gap; in vertical mode it's the left/right gap. Accepts any CSS length: `5%`, `10px`, `0.5em`. Default is `0` (dividers go edge to edge). |
 | `embedded` | `boolean` | `false` | Strips card chrome (padding, background, shadow, border) for nesting inside another card. See [Embedded Mode](#embedded-mode). |
-| `card_shadow` | `CSS box-shadow` | *none* | Custom box-shadow for the outer card. Example: `0 2px 8px rgba(0,0,0,0.1)`. |
-| `item_shadow` | `CSS box-shadow` | *none* | Custom box-shadow for each individual forecast item. |
+| `card_shadow` | `CSS box-shadow` | *none* | Box-shadow for the outer card. Example: `0 2px 8px rgba(0,0,0,0.1)`. |
+| `item_shadow` | `CSS box-shadow` | *none* | Box-shadow for each individual forecast item. |
+| `card_background` | `CSS background` | *theme default* | Background of the outer card. Accepts any CSS background value: colors, gradients, `rgba(...)`, etc. Overrides the theme and glass defaults. Ignored when `embedded: true`. |
+| `item_background` | `CSS background` | *per style* | Background of each forecast item. Only has a visible effect in `soft` and embedded `glass` styles (which have item backgrounds by default). In `clean` or standalone `glass`, items have no background unless you set one here. |
 | `custom_icon_path` | `string` | — | Path to a folder containing custom SVG weather icons. See [Custom Icons](#custom-icons). |
+
+```yaml
+# Example: thin, inset dividers
+dividers: true
+divider_color: "rgba(255,255,255,0.1)"
+divider_width: 2px
+divider_inset: 10%
+```
 
 </details>
 
@@ -166,7 +180,7 @@ tap_action:
   action: none
 ```
 
-> The card distinguishes between taps and scroll gestures. Scrolling through the forecast won't accidentally trigger the tap action. When the action is set to `none`, the pointer cursor is also hidden.
+> The card tells taps and scroll gestures apart. Scrolling through the forecast won't accidentally trigger the tap action. When the action is set to `none`, the pointer cursor is also hidden.
 
 </details>
 
@@ -174,7 +188,7 @@ tap_action:
 
 ## Styles
 
-The `style` option controls how individual forecast items are rendered. There are three options.
+The `style` option controls how individual forecast items look. There are three options.
 
 <details>
 <summary><b>clean</b> (default)</summary>
@@ -212,7 +226,13 @@ style: soft
 
 <br>
 
-Same tile layout as `soft`, but with a frosted-glass effect using `backdrop-filter`. The outer card also becomes translucent so you can see through to whatever is behind it. Works best on dashboards with a visible background image or gradient. Dividers are automatically hidden.
+A frosted-glass effect using `backdrop-filter`. How it works depends on whether the card is embedded or not:
+
+**Standalone (not embedded):** The outer card gets a translucent background with blur. The individual forecast items stay clean with no background, so the card's blur shows through. Dividers work in this mode.
+
+**Embedded:** The card chrome is stripped (as with any embedded card), so there's no outer card to blur. Instead, each item gets its own frosted tile with blur and a subtle tinted background. Dividers are hidden since the tiles provide separation.
+
+Works best on dashboards with a visible background image or gradient.
 
 ```yaml
 type: custom:minimal-forecast-card
@@ -220,15 +240,13 @@ entity: weather.home
 style: glass
 ```
 
-> The glass effect on the outer card is automatically disabled when `embedded: true`, since the parent card is expected to handle its own background.
-
 </details>
 
 <br>
 
 ### CSS Variables
 
-In addition to the YAML settings listed in the [Configuration](#configuration) section, you can fine-tune the card's appearance using CSS custom properties. Set these in your Home Assistant theme to apply them globally, or use `card_mod` to target a specific card instance.
+On top of the YAML options in the [Configuration](#configuration) section, you can fine-tune the card using CSS custom properties. Set these in your Home Assistant theme for global use, or use `card_mod` to target a specific card.
 
 <details>
 <summary><b>Color & Weight Variables</b></summary>
@@ -238,12 +256,16 @@ In addition to the YAML settings listed in the [Configuration](#configuration) s
 | `--mfc-label-color` | `--secondary-text-color` | Color of the day/hour label. |
 | `--mfc-hi-color` | `--primary-text-color` | Color of the high temperature. |
 | `--mfc-lo-color` | `--secondary-text-color` | Color of the low temperature. |
-| `--mfc-icon-color` | `--state-icon-color` | Color of the weather icon (MDI icons only, has no effect on custom SVGs). |
-| `--mfc-divider-color` | `--divider-color` | Color of the separator lines between items. |
-| `--mfc-spark-color` | `--primary-color` | Color of the sparkline curve. |
+| `--mfc-icon-color` | `--secondary-text-color` | Color of the weather icon (MDI icons only, no effect on custom SVGs). |
+| `--mfc-divider-color` | `var(--divider-color, rgba(255,255,255,0.2))` | Color of the separator lines. |
+| `--mfc-divider-width` | `3px` | Thickness of the separator lines. |
+| `--mfc-divider-inset` | `0` | Inset at both ends of each divider line. |
+| `--mfc-spark-color` | `var(--primary-color)` | Color of the sparkline curve. |
 | `--mfc-spark-width` | `2` | Stroke width of the sparkline. |
 | `--mfc-card-shadow` | `--ha-card-box-shadow` | Box shadow of the outer card. |
 | `--mfc-item-shadow` | `none` | Box shadow of each forecast item. |
+| `--mfc-card-bg` | *theme card background* | Background of the outer card. Overrides the theme default and the glass effect. |
+| `--mfc-item-bg` | *per style* | Background of each forecast item. Overrides the `soft` and embedded `glass` tile backgrounds. |
 | `--mfc-label-font-weight` | `600` | Font weight of the day/hour label. |
 | `--mfc-hi-font-weight` | `600` | Font weight of the high temperature. |
 | `--mfc-lo-font-weight` | `400` | Font weight of the low temperature. |
@@ -253,7 +275,7 @@ In addition to the YAML settings listed in the [Configuration](#configuration) s
 <details>
 <summary><b>Card Mod Example</b></summary>
 
-This example shows how to apply custom styles to a specific card instance using `card_mod`.
+This shows how to apply custom styles to a specific card using `card_mod`.
 
 ```yaml
 type: custom:minimal-forecast-card
@@ -271,13 +293,12 @@ card_mod:
 </details>
 
 > [!IMPORTANT]
-> These are CSS custom properties, not YAML card options. To use them globally, add them to your HA theme file. For card-level settings like `sparkline_color`, `card_shadow`, and `item_shadow`, see the [Configuration](#configuration) section — those are YAML options you set directly on the card.
-
+> For the YAML equivalents (like `sparkline_color`, `divider_color`, `divider_width`, `divider_inset`, `card_shadow`, `item_shadow`, `card_background`, `item_background`), see the [Configuration](#configuration) section.
 <br>
 
 ## Embedded Mode
 
-When `embedded: true`, the card removes all of its own visual chrome — padding, background, box shadow, and border are stripped away. This is intended for nesting the forecast inside another card (like a vertical stack or the Atmospheric Weather Card) without the visual doubling of card-inside-card borders.
+Setting `embedded: true` removes all card chrome: padding, background, box shadow, and border are stripped. This is meant for nesting the forecast inside another card (like a vertical stack or the Atmospheric Weather Card) so you don't get that card-inside-card look.
 
 <!-- SCREENSHOT PLACEHOLDER: embedded vs non-embedded comparison -->
 <!-- <img width="400" alt="image" src="URL_HERE" /> -->
@@ -289,19 +310,19 @@ embedded: true
 style: glass
 ```
 
-The glass style's translucent outer background is also disabled in embedded mode, since the parent card handles its own background.
+When using the `glass` style with `embedded: true`, the outer card's glass effect is disabled (since the parent card handles its own background). Instead, each individual forecast item gets its own frosted tile.
 
 <br>
 
 ## Custom Icons
 
-By default, the card uses Home Assistant's built-in MDI weather icons. If you prefer your own set, point the card to a folder containing SVG files named after each weather condition.
+By default the card uses Home Assistant's built-in MDI weather icons. If you prefer your own set, point the card to a folder containing SVG files named after each weather condition.
 
 ```yaml
 custom_icon_path: /local/icons/weather/
 ```
 
-The card loads icons as `{path}/{condition}.svg` — for example, if the forecast says `rainy`, it loads `/local/icons/weather/rainy.svg`.
+The card loads icons as `{path}/{condition}.svg`. For example, if the forecast says `rainy`, it loads `/local/icons/weather/rainy.svg`.
 
 <details>
 <summary><b>Expected filenames</b></summary>
@@ -330,10 +351,15 @@ items_to_show: 7
 visible: 5
 direction: horizontal
 style: soft
-dividers: false
+dividers: true
+divider_color: "rgba(255,255,255,0.15)"
+divider_width: 2px
+divider_inset: 5%
 item_spacing: 4px
 inner_spacing: 8px
 item_height: 120px
+card_padding: 16px
+item_padding: 0.75em 0.5em
 font_size: medium
 icon_size: 30
 hide_min_temp: false
@@ -342,6 +368,8 @@ sparkline_color: var(--primary-color)
 sparkline_width: 2
 card_shadow: 0 2px 6px rgba(0,0,0,0.08)
 item_shadow: none
+card_background: "rgba(0,0,0,0.4)"
+item_background: "rgba(255,255,255,0.08)"
 embedded: false
 custom_icon_path: /local/icons/weather/
 tap_action:
