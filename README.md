@@ -61,7 +61,7 @@ A basic card:
 type: custom:minimal-forecast-card
 entity: weather.your_weather_entity
 forecast_type: daily
-days_to_show: 7
+items_to_show: 7
 visible: 4
 style: clean
 dividers: true
