@@ -53,7 +53,7 @@ The focus here is just on showing a clean forecast. It's deliberately light on f
 
 ## Quick Start
 
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/d62762a9-35cf-4711-9d9c-5fc1568b4d08" /><br>
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/a5397566-38f2-4f99-beba-8bc6d6ab23e4" />
 
 A basic card:
 
