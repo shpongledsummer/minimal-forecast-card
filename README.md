@@ -161,6 +161,7 @@ sparkline_width: 3
 | `card_background` | `CSS background` | *theme default* | Background of the outer card. Accepts any CSS background value: colors, gradients, `rgba(...)`, etc. Overrides the theme and glass defaults. Ignored when `embedded: true`. |
 | `item_background` | `CSS background` | *per style* | Background of each forecast item. Only has a visible effect in `soft` and embedded `glass` styles (which have item backgrounds by default). In `clean` or standalone `glass`, items have no background unless you set one here. |
 | `custom_icon_path` | `string` | — | Path to a folder containing custom SVG weather icons. See [Custom Icons](#custom-icons). |
+| `icon_filter` | `CSS filter` | *none* | Applies a visual filter to the weather icons (e.g., `brightness(0.8)`, `grayscale(100%)`). *Note: Custom SVGs have a subtle drop-shadow by default if this is left unset.* |
 
 ```yaml
 # Example: thin, inset dividers
@@ -273,6 +274,7 @@ On top of the YAML options in the [Configuration](#configuration) section, you c
 | `--mfc-hi-color` | `--primary-text-color` | Color of the high temperature. |
 | `--mfc-lo-color` | `--secondary-text-color` | Color of the low temperature. |
 | `--mfc-icon-color` | `--secondary-text-color` | Color of the weather icon (MDI icons only, no effect on custom SVGs). |
+| `--mfc-icon-filter` | *none* | CSS filter applied to the weather icons. Custom SVGs fall back to a subtle drop-shadow if this is unset. |
 | `--mfc-divider-color` | `var(--divider-color, rgba(255,255,255,0.2))` | Color of the separator lines. |
 | `--mfc-divider-width` | `3px` | Thickness of the separator lines. |
 | `--mfc-divider-inset` | `0` | Inset at both ends of each divider line. |
