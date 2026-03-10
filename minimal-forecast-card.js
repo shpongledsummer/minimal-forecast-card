@@ -20,6 +20,7 @@
  *   embedded: false                   # strip card chrome for nesting
  *   font_size: medium                 # any CSS length (14px, 1.2em) or small | medium | large | xlarge
  *   icon_size: 32                     # px override
+ *   icon_filter: brightness(0.8)      # CSS filter for icons
  *   custom_icon_path: /local/icons/   # serves {condition}.svg
  *   tap_action:
  *     action: more-info               # more-info | navigate | url | call-service | none
@@ -148,7 +149,6 @@ const CSS = `
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
     contain: layout style paint;
   }
   .fc-row[data-scroll="x"] .fc-items {
@@ -302,13 +302,14 @@ const CSS = `
     --mdc-icon-size: var(--mfc-icon);
     color: var(--mfc-icon-color, var(--state-icon-color, #333333));
     flex-shrink: 0;
+    filter: var(--mfc-icon-filter, none);
   }
   .fc-custom-icon {
     width: var(--mfc-icon);
     height: var(--mfc-icon);
     object-fit: contain;
     flex-shrink: 0;
-    filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.05));
+    filter: var(--mfc-icon-filter, drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.05)));
   }
   .fc-row[data-dir="v"] .fc-icon,
   .fc-row[data-dir="v"] .fc-custom-icon {
@@ -395,7 +396,7 @@ const FONT_SIZES = Object.freeze({
 
 const STYLE_SET  = new Set(["clean", "soft", "glass"]);
 
-const POLL_INTERVAL_MS = 30 * 60_000; // 30 minutes
+const POLL_INTERVAL_MS = 30 * 60_000; // legacy fallback only (HA < 2023.12)
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Pure helpers
@@ -418,11 +419,12 @@ function cssLen(v, fallback) {
   return fallback;
 }
 
-/** O(1) forecast fingerprint — gates redundant DOM updates. */
-function fp(fc) {
+/** Forecast fingerprint — gates redundant DOM updates. */
+function fingerprint(fc) {
   if (!fc?.length) return "";
-  const a = fc[0], z = fc[fc.length - 1];
-  return `${fc.length}|${a.datetime}|${a.temperature}|${a.templow}|${z.datetime}|${z.temperature}|${z.templow}`;
+  let s = "" + fc.length;
+  for (const f of fc) s += `|${f.datetime}|${f.temperature}|${f.templow}|${f.condition}`;
+  return s;
 }
 
 /** Strip past entries. Daily: before today midnight. Hourly: before now. */
@@ -455,9 +457,8 @@ function isToday(dt) {
 
 function createIcon(cond, path) {
   if (path) {
-    const base = path.endsWith("/") ? path : path + "/";
     const img = document.createElement("img");
-    img.src = `${base}${cond}.svg`;
+    img.src = `${path}${cond}.svg`;
     img.className = "fc-custom-icon";
     img.alt = cond;
     img.loading = "lazy";
@@ -509,7 +510,7 @@ function createColumn(f, daily, locale, iconPath, hideMin) {
 function updateColumn(col, f, daily, locale, iconPath, hideMin) {
   // Today marker
   if (daily && isToday(f.datetime)) col.dataset.today = "";
-  else delete col.dataset.today;
+  else col.removeAttribute("data-today");
 
   // Label
   col.children[0].textContent = fmtLabel(f.datetime, daily, locale);
@@ -517,9 +518,8 @@ function updateColumn(col, f, daily, locale, iconPath, hideMin) {
   // Icon — update in-place when element type matches, replace otherwise
   const iconEl = col.children[1];
   if (iconPath) {
-    const base = iconPath.endsWith("/") ? iconPath : iconPath + "/";
     if (iconEl.tagName === "IMG") {
-      iconEl.src = `${base}${f.condition}.svg`;
+      iconEl.src = `${iconPath}${f.condition}.svg`;
       iconEl.alt = f.condition;
     } else {
       iconEl.replaceWith(createIcon(f.condition, iconPath));
@@ -661,12 +661,14 @@ class MinimalForecastCard extends HTMLElement {
     this._fc        = null;
     this._fcRaw     = null;
     this._hass      = null;
-    this._timer     = null;
+    this._unsub     = null;
+    this._paintRAF  = null;
     this._connected = false;
     this._fetching  = false;
     this._tapXY     = null;
-    this._lastState = undefined;
-    this._colNodes  = [];
+    this._lastState    = undefined;
+    this._prevStateObj = null;
+    this._colNodes     = [];
 
     // ── Stable DOM skeleton ──
     const style = document.createElement("style");
@@ -693,6 +695,12 @@ class MinimalForecastCard extends HTMLElement {
     this._spark.appendChild(this._sparkPath);
 
     this._items.appendChild(this._spark);
+
+    this._errDiv = document.createElement("div");
+    this._errDiv.className = "not-found";
+    this._errDiv.style.display = "none";
+    this._items.appendChild(this._errDiv);
+
     this._cols.appendChild(this._items);
     this._row.appendChild(this._cols);
     this._card.appendChild(this._row);
@@ -720,6 +728,10 @@ class MinimalForecastCard extends HTMLElement {
       this._tapXY = null;
       if (dx < 5 && dy < 5) fireTap(this, this._hass, this._cfg);
     }, { passive: true });
+
+    this._card.addEventListener("pointerleave", () => {
+      this._tapXY = null;
+    }, { passive: true });
   }
 
   // ─── Config (editor-flash safe) ───
@@ -730,8 +742,8 @@ class MinimalForecastCard extends HTMLElement {
     const next = {
       entity:     raw.entity,
       type:       raw.forecast_type === "hourly" ? "hourly" : "daily",
-      items:      clamp(raw.items_to_show ?? 7, 1, 14),
-      vis:        clamp(raw.visible ?? 5, 1, 14),
+      items:      clamp(Number(raw.items_to_show) || 7, 1, 14),
+      vis:        clamp(Number(raw.visible) || 5, 1, 14),
       itemSp:     raw.item_spacing != null ? cssLen(raw.item_spacing, "0px") : null,
       innerSp:    cssLen(raw.inner_spacing, "10px"),
       itemHeight: raw.item_height != null ? cssLen(raw.item_height, null) : null,
@@ -754,7 +766,8 @@ class MinimalForecastCard extends HTMLElement {
       embedded:   raw.embedded === true,
       fontSize:   parseFontSize(raw.font_size),
       iconSize:   cssLen(raw.icon_size, "3em"),
-      iconPath:   raw.custom_icon_path || null,
+      iconFilter: raw.icon_filter != null ? String(raw.icon_filter).trim() : null,
+      iconPath:   raw.custom_icon_path ? (raw.custom_icon_path.endsWith("/") ? raw.custom_icon_path : raw.custom_icon_path + "/") : null,
       tap:        raw.tap_action?.action ?? "more-info",
       tap_action: raw.tap_action || { action: "more-info" },
     };
@@ -765,20 +778,21 @@ class MinimalForecastCard extends HTMLElement {
     this._applyTokens();
 
     if (fetchNeeded) {
-      this._fc     = null;
-      this._fcRaw  = null;
-      this._fcKey  = "";
-      if (this._connected && this._hass) this._fetch();
+      this._fc           = null;
+      this._fcRaw        = null;
+      this._fcKey        = "";
+      this._prevStateObj = null;
+      if (this._connected && this._hass) this._subscribe();
     } else if (this._fcRaw) {
       this._fc = filterPast(this._fcRaw, next.type === "daily").slice(0, next.items);
-      this._fcKey = fp(this._fc);
+      this._fcKey = fingerprint(this._fc);
       const VIS_KEYS = [
         "items", "vis", "itemSp", "innerSp", "dividers", "style",
-        "dir", "spark", "hideMin", "embedded", "fontSize", "iconSize", "iconPath",
+        "dir", "spark", "hideMin", "embedded", "fontSize", "iconSize", "iconPath", "iconFilter",
       ];
       for (const k of VIS_KEYS) {
         if (next[k] !== prev[k]) {
-          this._paint();
+          this._schedulePaint();
           break;
         }
       }
@@ -792,6 +806,12 @@ class MinimalForecastCard extends HTMLElement {
     if (!this._cfg.entity) return;
 
     const obj = hass.states[this._cfg.entity];
+
+    // Reference-equality gate: HA replaces the state object only when
+    // *this* entity actually updates. Skip all work if unchanged.
+    if (obj === this._prevStateObj) return;
+    this._prevStateObj = obj;
+
     if (!obj) {
       this._showError(`Entity <b>${this._cfg.entity}</b> not found`);
       this._lastState = undefined;
@@ -810,9 +830,9 @@ class MinimalForecastCard extends HTMLElement {
       return;
     }
 
-    // Fetch if: no data yet, or entity just recovered from an invalid state
-    if ((!this._fc || wasInvalid) && this._connected && !this._fetching) {
-      this._fetch();
+    // Subscribe if: not yet subscribed, or entity just recovered from invalid
+    if ((!this._unsub || wasInvalid) && this._connected) {
+      this._subscribe();
     }
   }
 
@@ -821,33 +841,77 @@ class MinimalForecastCard extends HTMLElement {
   connectedCallback() {
     this._connected = true;
     this._ro.observe(this._cols);
-    this._startTimer();
-    if (this._hass && !this._fc) this._fetch();
+    this._subscribe();
   }
 
   disconnectedCallback() {
     this._connected = false;
     this._ro.unobserve(this._cols);
-    this._stopTimer();
-  }
-
-  _startTimer() {
-    this._stopTimer();
-    this._timer = setInterval(() => {
-      if (this._hass) this._fetch();
-    }, POLL_INTERVAL_MS);
-  }
-
-  _stopTimer() {
-    if (this._timer) {
-      clearInterval(this._timer);
-      this._timer = null;
+    this._unsubscribe();
+    if (this._paintRAF) {
+      cancelAnimationFrame(this._paintRAF);
+      this._paintRAF = null;
     }
   }
 
-  // ─── Fetch (guarded, fires from timer / connect / config change / recovery) ───
+  // ─── Forecast subscription (HA 2023.12+, legacy polling fallback) ───
 
-  async _fetch() {
+  _subscribe() {
+    this._unsubscribe();
+    if (!this._hass?.connection || !this._cfg.entity || !this._connected) return;
+
+    const entity = this._cfg.entity;
+    const type = this._cfg.type;
+
+    this._hass.connection.subscribeMessage(
+      (msg) => {
+        if (!this._connected) return;
+        this._handleForecast(msg.forecast ?? []);
+      },
+      { type: "weather/subscribe_forecast", forecast_type: type, entity_id: entity },
+    ).then((unsub) => {
+      // Guard: if config/connection changed while awaiting, discard stale sub
+      if (!this._connected || entity !== this._cfg.entity || type !== this._cfg.type) {
+        unsub();
+        return;
+      }
+      this._unsub = unsub;
+    }).catch((e) => {
+      if (!this._connected) return;
+      // HA < 2023.12: subscribe_forecast unavailable, fall back to polling
+      console.warn("minimal-forecast-card: subscribe_forecast unavailable, using legacy polling", e);
+      this._fetchOnce();
+      const timer = setInterval(() => {
+        if (this._hass) this._fetchOnce();
+      }, POLL_INTERVAL_MS);
+      this._unsub = () => clearInterval(timer);
+    });
+  }
+
+  _unsubscribe() {
+    if (this._unsub) {
+      this._unsub();
+      this._unsub = null;
+    }
+  }
+
+  /** Process raw forecast array → filter → fingerprint → paint. */
+  _handleForecast(raw) {
+    this._fcRaw = raw;
+
+    const trimmed = filterPast(raw, this._cfg.type === "daily")
+      .slice(0, this._cfg.items);
+    const key = fingerprint(trimmed);
+
+    if (key !== this._fcKey || !this._fc) {
+      this._fcKey = key;
+      this._fc = trimmed;
+      this._schedulePaint();
+    }
+  }
+
+  /** Legacy one-shot fetch via get_forecasts (fallback for HA < 2023.12). */
+  async _fetchOnce() {
     if (!this._hass || !this._cfg.entity || this._fetching) return;
     this._fetching = true;
 
@@ -864,17 +928,8 @@ class MinimalForecastCard extends HTMLElement {
       if (!this._connected) return;
 
       const eid = this._cfg.entity;
-      this._fcRaw = (res?.[eid] || res?.response?.[eid])?.forecast ?? [];
-
-      const trimmed = filterPast(this._fcRaw, this._cfg.type === "daily")
-        .slice(0, this._cfg.items);
-      const key = fp(trimmed);
-
-      if (key !== this._fcKey || !this._fc) {
-        this._fcKey = key;
-        this._fc = trimmed;
-        this._paint();
-      }
+      const raw = (res?.[eid] || res?.response?.[eid])?.forecast ?? [];
+      this._handleForecast(raw);
     } catch (e) {
       if (!this._connected) return;
       console.warn(`minimal-forecast-card: fetch failed (${this._cfg.entity})`, e);
@@ -889,20 +944,18 @@ class MinimalForecastCard extends HTMLElement {
   // ─── DOM: error state ───
 
   _showError(msg) {
+    if (this._paintRAF) {
+      cancelAnimationFrame(this._paintRAF);
+      this._paintRAF = null;
+    }
     this._spark.style.display = "none";
 
     // Clear tracked columns
     for (const col of this._colNodes) col.remove();
     this._colNodes.length = 0;
 
-    // Reuse or create error element
-    let errDiv = this._items.querySelector(".not-found");
-    if (!errDiv) {
-      errDiv = document.createElement("div");
-      errDiv.className = "not-found";
-      this._items.appendChild(errDiv);
-    }
-    errDiv.innerHTML = msg;
+    this._errDiv.innerHTML = msg;
+    this._errDiv.style.display = "";
   }
 
   // ─── DOM: tokens (cheap — called every setConfig) ───
@@ -917,7 +970,7 @@ class MinimalForecastCard extends HTMLElement {
     if (c.dividers) {
       this._row.dataset.dividers = "";
     } else {
-      delete this._row.dataset.dividers;
+      this._row.removeAttribute("data-dividers");
     }
 
     this._card.dataset.style = c.style;
@@ -930,6 +983,10 @@ class MinimalForecastCard extends HTMLElement {
     else rs.removeProperty("--mfc-item-h");
     rs.setProperty("--mfc-vis", c.vis);
     rs.setProperty("--mfc-icon", c.iconSize);
+
+    if (c.iconFilter) rs.setProperty("--mfc-icon-filter", c.iconFilter);
+    else rs.removeProperty("--mfc-icon-filter");
+    // <-------------------->
 
     if (c.dividerColor) rs.setProperty("--mfc-divider-color", c.dividerColor);
     else rs.removeProperty("--mfc-divider-color");
@@ -984,6 +1041,16 @@ class MinimalForecastCard extends HTMLElement {
     }
   }
 
+  // ─── DOM: paint scheduling (defers to next animation frame) ───
+
+  _schedulePaint() {
+    if (this._paintRAF) return;
+    this._paintRAF = requestAnimationFrame(() => {
+      this._paintRAF = null;
+      if (this._connected) this._paint();
+    });
+  }
+
   // ─── DOM: paint (recycles existing nodes, creates/removes only the diff) ───
 
   _paint() {
@@ -997,15 +1064,8 @@ class MinimalForecastCard extends HTMLElement {
       return;
     }
 
-    // Remove error element if transitioning from error → data
-    const errDiv = this._items.querySelector(".not-found");
-    if (errDiv) errDiv.remove();
-
-    // Sync viewport measurement for --_cols-w (ResizeObserver may not have
-    // fired yet on first paint). Single read, no forced reflow since _paint
-    // runs from async _fetch completion.
-    const colsW = this._cols.clientWidth;
-    if (colsW > 0) this._row.style.setProperty("--_cols-w", colsW + "px");
+    // Hide error element if transitioning from error → data
+    this._errDiv.style.display = "none";
 
     const needed = fc.length;
     const existing = this._colNodes.length;
