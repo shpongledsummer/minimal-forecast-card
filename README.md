@@ -349,7 +349,7 @@ custom_icon_path: /local/icons/weather/
 The card loads icons as `{path}/{condition}.svg`. For example, if the forecast says `rainy`, it loads `/local/icons/weather/rainy.svg`.
 
 <details>
-<summary><b>Expected filenames</b></summary>
+<summary><b>⚠️ Expected filenames</b></summary>
 
 <br>
 
