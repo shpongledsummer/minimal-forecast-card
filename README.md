@@ -4,10 +4,7 @@ A forecast-only card for Home Assistant, built as a companion to the [Atmospheri
 
 The focus here is just on showing a clean forecast. It's deliberately light on features because it's meant to do one thing and do it well. This card has horizontal and vertical layouts with pure CSS scrolling, a sparkline temperature curve, three visual styles, and plenty of styling options to tweak it for your dashboard.
 
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/e66a386d-d165-4251-9b9d-4eaf8ed5cac8" /><br>
-<img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
-
-*The examples are provided [here.](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)*
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/85e84cb0-fa05-446a-b5c1-08a72d538378" /><br>
 
 <br>
 
@@ -15,6 +12,7 @@ The focus here is just on showing a clean forecast. It's deliberately light on f
 
 [Installation](#installation)<br>
 [Quick Start](#quick-start)<br>
+[Usage Examples](#usage-examples)<br>
 [Configuration / Styling](#configuration--styling)<br>
 [Style Presets](#style-presets)<br>
 [CSS Variables](#css-variables)<br>
@@ -81,6 +79,15 @@ custom_icon_path: /local/weather-icons/
 ```
 
 This gives you a horizontal 7-day forecast with 4 items visible at a time, a sparkline temperature curve, and the `clean` style.
+
+<br>
+
+## Usage Examples
+
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/e66a386d-d165-4251-9b9d-4eaf8ed5cac8" /><br>
+<img width="400" alt="Image" src="https://github.com/user-attachments/assets/0e07ddde-6dd0-4767-a4bc-a770e0d88f2d" /><br>
+
+*The examples are provided [here.](https://github.com/shpongledsummer/atmospheric-weather-card#usage-modes)*
 
 <br>
 
