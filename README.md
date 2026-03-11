@@ -340,6 +340,8 @@ When using the `glass` style with `embedded: true`, the card's glass effect is d
 
 By default the card uses Home Assistant's built-in MDI weather icons. If you prefer your own set, point the card to a folder containing SVG files named after each weather condition.
 
+You can download the icons from the example screenshots [here](https://github.com/basmilius/weather-icons).
+
 ```yaml
 custom_icon_path: /local/icons/weather/
 ```
